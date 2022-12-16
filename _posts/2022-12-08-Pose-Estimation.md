@@ -6,32 +6,53 @@ category: [Lecture]
 tags: [ai]
 ---
 
-
 ### MediaPipe Hands poke bubbles(戳泡泡遊戲)
 
 **期末報告描述**
 
-一個可以透過攝像頭遊玩的戳泡泡遊戲，透過MediaPipe模型辨識畫面中食指的位置，並戳破畫面中的泡泡來計分。
+一個可以透過攝像頭遊玩的戳泡泡遊戲，透過**MediaPipe**模型辨識畫面中食指的位置，並戳破畫面中的泡泡來計分。
 
-**開發步驟:**
-1. <br>
-2. <br>
-3. <br>
-4. <br>
-5.  <br>
+**開發過程:**
+1. 建立手掌辨識<br>
+2. 繪製泡泡<br>
+3. 計分系統<br>
+4. 計時系統<br>
+5. 開始遊戲功能 <br>
 
 **執行環境:**
-1. <br>
-2. <br>
-3. <br>
-4. <br>
-5.  <br>
+
+這次的模型框架有特別強調對硬體的要求不高，應該大部分的電腦都能運行，唯一要注意的是需要**鏡頭**才能遊玩這個遊戲。
+![](https://i.imgur.com/zdY9HZd.png)
+
+以下是使用版本供參考
+
+* python 3.9.13
+* mediapipe 0.9.01
+
+
 
 ### MediaPipe介紹
 
+GitHub: [mediapipe ](https://google.github.io/mediapipe/)
 
+MediaPipe 是 Google Research 所開發的機器學習模型應用框架，支援 JavaScript、Python、C++ 等程式語言，也可以放在嵌入式平臺 (例如樹莓派等)、移動設備 ( iOS 或 Android ) 或後端伺服器
+
+如果使用 Python 語言進行開發，MediaPipe 支援下列幾種辨識功能
+
+1. MediaPipe Face Detection ( 人臉追蹤 )
+1. MediaPipe Face Mesh ( 人臉網格 )
+1. MediaPipe Hands ( 手掌偵測 )
+1. MediaPipe Holistic ( 全身偵測 )
+1. MediaPipe Pose ( 姿勢偵測 )
+1. MediaPipe Objectron ( 物體偵測 )
+1. MediaPipe Selfie Segmentation ( 人物去背 )
+
+
+其中我們要用到的是**MediaPipe Hands ( 手掌偵測 )**，官網的示意圖如下。
 ![](https://i.imgur.com/dtPZI4v.png)
 
+
+其中各個不同的手掌位置都有預設不同的代號，因為我們要判定的是食指，所以用的是8號。
 ![](https://i.imgur.com/MVqCJEP.png)
 
 
@@ -41,9 +62,7 @@ tags: [ai]
 程式的部分主要分成**辨識手掌**和**產生泡泡**還有**計分計時**三個部分，其中辨識手掌的部分主要參考自MediaPipe的官方文檔如下
 
 ### 辨識手掌
-```python=
-
-
+```
 import cv2
 import mediapipe as mp
 mp_drawing = mp.solutions.drawing_utils
@@ -87,23 +106,24 @@ with mp_hands.Hands(
       break
 cap.release()
 
-
-
 ```
 
 ### 產生泡泡
 
-```python=
+將泡泡的中心點設在`(rx,ry)`，當食指的位置`(x,y)`距離泡泡中心夠近時(小於泡泡半徑)，辨識為戳到泡泡。
+
+```
 if x>rx and x<(rx+25) and y>ry and y<(ry+25):
     run = True
 ```
-
-```python=
+當戳到泡泡時，將泡泡的中心重新設置在隨機的位置。
+```
 rx = random.randint(50,w-50)
 ry = random.randint(50,h-100)
 ```
+下面繪製出泡泡的圖形，用四個圓圈繪製出泡泡的模樣。
 
-```python=
+```
 cv2.circle(image, (rx, ry), 25, (255, 230, 190), -1)
 cv2.circle(image, (rx-10, ry-10), 3, (250, 250, 250), 4)
 cv2.circle(image, (rx + 10, ry + 10), 2, (250, 250, 250), 2)
@@ -111,49 +131,61 @@ cv2.circle(image, (rx, ry), 23, (230, 224, 176), 2)
 ```
 
 ### 計分計時
-
-
-```python=
-time_on = time.time()+30 
+按下w後，`i`變數由`False`改為`True`，代表遊戲開始。
 ```
+i = False
 
-```python=
-time_now = time.time()
-time_li = str(time_on - time_now)
+if cv2.waitKey(5) == ord('w'):
+    i = True
 ```
-
-```python=
-if time_on - time_now<= 0:
-    cv2.rectangle(image, (130, 200),(550, 270),(0, 0, 0),-1)
-    cv2.putText(image,"Your point is:" + str(fra) , (150,250), cv2.FONT_HERSHEY_DUPLEX, 1.5, (10, 215, 255), 2, cv2.LINE_AA)
+設定倒數計時30秒。
 ```
-
-```python=
+total_time = 30
+```
+判斷i為`True`後，開始倒數計時並執行計分。
+```
+if i:
+    time_now = time.time()
+    time_li = str(time_on - time_now)
+if i and run:
+    fra = fra + 1
+```
+顯示計分與倒數計時文字。
+```
 cv2.rectangle(image, (270,50),(400,10),(192, 192, 192),-1)
 cv2.rectangle(image, (250,460),(400,415),(192, 192, 192),-1)
 cv2.putText(image,"Point:" + str(fra) , (270, 40), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 cv2.putText(image,"Time:" + time_li[:4], (250, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 139), 2, cv2.LINE_AA)
 ```
+倒數計時時間為0時，顯示最終分數
+```
+if time_on - time_now <= 0:
+    cv2.rectangle(image, (130, 200),(550, 270),(0, 0, 0),-1)
+    cv2.putText(image,"Your point is:" + str(fra) , (150,250), cv2.FONT_HERSHEY_DUPLEX, 1.5, (10, 215, 255), 2, cv2.LINE_AA)
+```
 
 **完整MediaPipe Hands poke bubbles(戳泡泡遊戲)程式** <br>
 
-``` python
+```
 import cv2
 import mediapipe as mp
 import random
 import numpy as np
 import time
 
+
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 run=True
-fra = -1
-time_on = time.time()+30
+fra = 0
+i = False
+total_time =30
+time_on = 1
+time_now = 0
+time_li = str(total_time)
 cap = cv2.VideoCapture(0)
-
-
 
 with mp_hands.Hands(
     model_complexity=0,
@@ -172,9 +204,8 @@ with mp_hands.Hands(
     w = size[1]
     h = size[0]
 
-    if run:
+    if run :
         run = False
-        fra = fra + 1
         rx = random.randint(50,w-50)
         ry = random.randint(50,h-100)
 
@@ -200,8 +231,17 @@ with mp_hands.Hands(
 
     image2 = np.zeros((400, 400, 3), np.uint8)
     image2.fill(90)
-    time_now = time.time()
-    time_li = str(time_on - time_now)
+    if not i:
+      cv2.rectangle(image, (200, 260),(470, 220),(192, 192, 192),-1)
+      cv2.putText(image,"Press w to start" , (200, 250), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+    if cv2.waitKey(5) == ord('w'):
+      i = True
+      time_on = time.time()+total_time
+    if i:
+      time_now = time.time()
+      time_li = str(time_on - time_now)
+    if i and run:
+      fra = fra + 1
 
     cv2.rectangle(image, (270,50),(400,10),(192, 192, 192),-1)
     cv2.rectangle(image, (250,460),(400,415),(192, 192, 192),-1)
@@ -212,31 +252,40 @@ with mp_hands.Hands(
     cv2.circle(image, (rx-10, ry-10), 3, (250, 250, 250), 4)
     cv2.circle(image, (rx + 10, ry + 10), 2, (250, 250, 250), 2)
     cv2.circle(image, (rx, ry), 23, (230, 224, 176), 2)
-    if time_on - time_now<= 0:
+    if time_on - time_now <= 0:
           cv2.rectangle(image, (130, 200),(550, 270),(0, 0, 0),-1)
           cv2.putText(image,"Your point is:" + str(fra) , (150,250), cv2.FONT_HERSHEY_DUPLEX, 1.5, (10, 215, 255), 2, cv2.LINE_AA)
     cv2.imshow('MediaPipe Hands', image)
-    if cv2.waitKey(5) == ord('q') or time_on - time_now<= 0:
+    if cv2.waitKey(5) & 0xFF == 27 :
+      break
+    if time_on - time_now <= 0:
       print("Your point is " + str(fra) )
-      time.sleep(5)
+      time.sleep(2)
       break
 
 cap.release()
 ```
+
+### 成果說明
+影片展示 : https://www.youtube.com/watch?v=YJ_JCDBOgiE
+{%youtube
+YJ_JCDBOgiE
+%}
 
 
 
 ---
 ### 參考資料
 
-https://google.github.io/mediapipe/
-
-https://steam.oxxostudio.tw/category/python/ai/ai-mediapipe-hand.html#a1
-
-https://www.kaggle.com/code/rkuo2000/mediapipe-pose
 
 
-https://steam.oxxostudio.tw/category/python/ai/opencv-drawing.html#a4
+
+[2](https://www.kaggle.com/code/rkuo2000/mediapipe-pose)
+
+
+[3](https://blog.gtwang.org/programming/opencv-drawing-functions-tutorial/)
+
+
 
 <br>
 <br>
