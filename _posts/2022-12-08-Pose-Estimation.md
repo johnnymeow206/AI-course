@@ -6,25 +6,18 @@ category: [Lecture]
 tags: [ai]
 ---
 
-
-
 ### MediaPipe Hands poke bubbles(戳泡泡遊戲)
-
 
 **期末報告描述**
 
-一個可以透過鏡頭遊玩的戳泡泡遊戲，透過**MediaPipe**模型辨識食指的位置，在30秒內盡可能的戳破泡泡來得分。
-
----
+一個可以透過攝像頭遊玩的戳泡泡遊戲，透過**MediaPipe**模型辨識畫面中食指的位置，並戳破畫面中的泡泡來計分。
 
 **開發過程:**
-1. 手掌辨識<br>
+1. 建立手掌辨識<br>
 2. 繪製泡泡<br>
 3. 計分系統<br>
 4. 計時系統<br>
 5. 開始遊戲功能 <br>
-
----
 
 **執行環境:**
 
@@ -37,15 +30,12 @@ tags: [ai]
 * mediapipe 0.9.01
 
 
----
 
 ### MediaPipe介紹
 
 GitHub: [mediapipe ](https://google.github.io/mediapipe/)
 
-Kaggle: [rkuo2000/mediapipe-pose](https://www.kaggle.com/code/rkuo2000/mediapipe-pose)
-
-**MediaPipe** 是 Google Research 所開發的機器學習模型應用框架，支援 JavaScript、Python、C++ 等程式語言，也可以放在嵌入式平臺 (例如樹莓派等)、移動設備 ( iOS 或 Android ) 或後端伺服器
+MediaPipe 是 Google Research 所開發的機器學習模型應用框架，支援 JavaScript、Python、C++ 等程式語言，也可以放在嵌入式平臺 (例如樹莓派等)、移動設備 ( iOS 或 Android ) 或後端伺服器
 
 如果使用 Python 語言進行開發，MediaPipe 支援下列幾種辨識功能
 
@@ -65,16 +55,13 @@ Kaggle: [rkuo2000/mediapipe-pose](https://www.kaggle.com/code/rkuo2000/mediapipe
 其中各個不同的手掌位置都有預設不同的代號，因為我們要判定的是食指，所以用的是8號。
 ![](https://i.imgur.com/MVqCJEP.png)
 
----
 
 ## 程式說明
 
 
 程式的部分主要分成**辨識手掌**和**產生泡泡**還有**計分計時**三個部分，其中辨識手掌的部分主要參考自MediaPipe的官方文檔如下
 
----
-### 官方文檔
-
+### 辨識手掌
 ```
 import cv2
 import mediapipe as mp
@@ -118,65 +105,8 @@ with mp_hands.Hands(
     if cv2.waitKey(5) & 0xFF == 27:
       break
 cap.release()
+
 ```
-
-
-### 辨識手掌
-```
-import cv2
-import mediapipe as mp
-import random
-import numpy as np
-import time
-
-
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_hands = mp.solutions.hands
-
-cap = cv2.VideoCapture(0)
-
-with mp_hands.Hands(
-    model_complexity=0,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as hands:
-  while cap.isOpened():
-    success, image = cap.read()
-    image = cv2.flip(image,1)
-
-    if not success:
-      print("Ignoring empty camera frame.")
-      continue
-
-    image =cv2.resize(image,(640,480))
-    size = image.shape
-    w = size[1]
-    h = size[0]
-
-    if run :
-        run = False
-        rx = random.randint(50,w-50)
-        ry = random.randint(50,h-100)
-
-    image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = hands.process(image)
-    image.flags.writeable = True
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    if results.multi_hand_landmarks:
-      for hand_landmarks in results.multi_hand_landmarks:
-        x = hand_landmarks.landmark[8].x * w
-        y = hand_landmarks.landmark[8].y * h
-        if x>rx and x<(rx+25) and y>ry and y<(ry+25):
-            run = True
-        mp_drawing.draw_landmarks(
-            image,
-            hand_landmarks,
-            mp_hands.HAND_CONNECTIONS,
-            mp_drawing_styles.get_default_hand_landmarks_style(),
-            mp_drawing_styles.get_default_hand_connections_style())
-```
----
 
 ### 產生泡泡
 
@@ -199,9 +129,6 @@ cv2.circle(image, (rx-10, ry-10), 3, (250, 250, 250), 4)
 cv2.circle(image, (rx + 10, ry + 10), 2, (250, 250, 250), 2)
 cv2.circle(image, (rx, ry), 23, (230, 224, 176), 2)
 ```
-
----
-
 
 ### 計分計時
 按下w後，`i`變數由`False`改為`True`，代表遊戲開始。
@@ -237,10 +164,7 @@ if time_on - time_now <= 0:
     cv2.putText(image,"Your point is:" + str(fra) , (150,250), cv2.FONT_HERSHEY_DUPLEX, 1.5, (10, 215, 255), 2, cv2.LINE_AA)
 ```
 
----
-
-### **完整MediaPipe Hands poke bubbles(戳泡泡遊戲)程式** <br>
-程式連結: [MediaPipe_Hands_poke_bubbles.py](https://github.com/hahakevin45/AI/blob/gh-pages/code/MediaPipe_Hands_poke_bubbles.py)
+**完整MediaPipe Hands poke bubbles(戳泡泡遊戲)程式** <br>
 
 ```
 import cv2
@@ -263,7 +187,6 @@ time_now = 0
 time_li = str(total_time)
 cap = cv2.VideoCapture(0)
 
-# For webcam input:
 with mp_hands.Hands(
     model_complexity=0,
     min_detection_confidence=0.5,
@@ -343,35 +266,24 @@ with mp_hands.Hands(
 cap.release()
 ```
 
----
-
-
 ### 成果說明
-
-
-#### 影片展示: 
-<iframe width=854 height=480  src="https://www.youtube.com/embed/YJ_JCDBOgiE?enablejsapi=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen onload="onYouTubeIframeAPIReady()"></iframe>
-
-
-#### 照片展示:
-
-開始遊戲時，按下W才會開始遊戲，可以先暖身一下
-
-![](https://i.imgur.com/AtdW7us.jpg =80%x)
-
-遊戲過程，辨識手部，這裡可以一次辨識兩隻手，精確度跟速度都不錯
-![](https://i.imgur.com/SNbTB9S.jpg =80%x)
-
-遊戲結束會顯示分數
-
-![](https://i.imgur.com/8mhVSrE.jpg =80%x)
+影片展示 : https://www.youtube.com/watch?v=YJ_JCDBOgiE
+{%youtube
+YJ_JCDBOgiE
+%}
 
 
 
 ---
 ### 參考資料
 
-[Python 與 OpenCV 加入線條圖案與文字教學](https://blog.gtwang.org/programming/opencv-drawing-functions-tutorial/)
+
+
+
+[2](https://www.kaggle.com/code/rkuo2000/mediapipe-pose)
+
+
+[3](https://blog.gtwang.org/programming/opencv-drawing-functions-tutorial/)
 
 
 
