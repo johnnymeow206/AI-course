@@ -201,7 +201,7 @@ if time_on - time_now <= 0:
 ### **完整MediaPipe Hands poke bubbles(戳泡泡遊戲)程式** <br>
 程式連結: [MediaPipe_Hands_poke_bubbles.py](https://github.com/hahakevin45/AI/blob/gh-pages/code/MediaPipe_Hands_poke_bubbles.py)
 
-```
+```python=
 import cv2
 import mediapipe as mp
 import random
