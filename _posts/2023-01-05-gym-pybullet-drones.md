@@ -8,6 +8,10 @@ tags: [jekyll, ai]
 
 ### PyBullet-Gym for Drones (四軸無人機之強化學習)
 
+**期末報告描述**
+
+透過調整GUI按鍵數值(左右滑動)來控制四軸無人機飛行。
+
 ---
 ## Student's Accomplishment
 ### [MediaPipe Hands poke bubbles](https://hahakevin45.github.io/AI/lecture/2022/12/08/Pose-Estimation.html)
