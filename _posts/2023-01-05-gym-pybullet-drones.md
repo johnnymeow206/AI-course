@@ -116,17 +116,17 @@ RECORD = False
 
 if __name__ == "__main__":
 
-    #### Create the ENVironment ################################
+    #### Create the ENVironment ################################ 創建環境
     ENV = CtrlAviary(gui=GUI, record=RECORD)
     PYB_CLIENT = ENV.getPyBulletClient()
 
-    #### Initialize the LOGGER #################################
+    #### Initialize the LOGGER ################################# 初始化記錄器
     LOGGER = Logger(logging_freq_hz=ENV.SIM_FREQ)
 
-    #### Initialize the controller #############################
+    #### Initialize the controller ############################# 初始化控制器
     CTRL = HW1Control(ENV)
 
-    #### Initialize the ACTION #################################
+    #### Initialize the ACTION ################################# 初始化動作
     ACTION = {}
     OBS = ENV.reset()
     STATE = OBS["0"]["state"]
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                                        target_acceleration=np.zeros(3)
                                        )
 
-    #### Initialize target trajectory ##########################
+    #### Initialize target trajectory ########################## 初始化目標軌跡
     TARGET_POSITION = np.array([[0, 0, 1.0] for i in range(DURATION*ENV.SIM_FREQ)])
     TARGET_VELOCITY = np.zeros([DURATION * ENV.SIM_FREQ, 3])
     TARGET_ACCELERATION = np.zeros([DURATION * ENV.SIM_FREQ, 3])
@@ -146,17 +146,17 @@ if __name__ == "__main__":
     TARGET_VELOCITY[1:, :] = (TARGET_POSITION[1:, :] - TARGET_POSITION[0:-1, :]) / ENV.SIM_FREQ
     TARGET_ACCELERATION[1:, :] = (TARGET_VELOCITY[1:, :] - TARGET_VELOCITY[0:-1, :]) / ENV.SIM_FREQ
 
-    #### Run the simulation ####################################
+    #### Run the simulation #################################### 運行模擬
     START = time.time()
     for i in range(0, DURATION*ENV.SIM_FREQ):
 
-        ### Secret control performance booster #####################
+        ### Secret control performance booster ##################### 秘密控制性能助推器
         # if i/ENV.SIM_FREQ>3 and i%30==0 and i/ENV.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [random.gauss(0, 0.3), random.gauss(0, 0.3), 3], p.getQuaternionFromEuler([random.randint(0, 360),random.randint(0, 360),random.randint(0, 360)]), physicsClientId=PYB_CLIENT)
 
-        #### Step the simulation ###################################
+        #### Step the simulation ################################### 步驟模擬
         OBS, _, _, _ = ENV.step(ACTION)
 
-        #### Compute control #######################################
+        #### Compute control ####################################### 計算控制
         STATE = OBS["0"]["state"]
         ACTION["0"] = CTRL.compute_control(current_position=STATE[0:3],
                                            current_velocity=STATE[10:13],
@@ -165,24 +165,24 @@ if __name__ == "__main__":
                                            target_acceleration=TARGET_ACCELERATION[i, :]
                                            )
 
-        #### Log the simulation ####################################
+        #### Log the simulation #################################### 記錄模擬
         LOGGER.log(drone=0, timestamp=i/ENV.SIM_FREQ, state=STATE)
 
-        #### Printout ##############################################
+        #### Printout ############################################## 輸出
         if i%ENV.SIM_FREQ == 0:
             ENV.render()
 
-        #### Sync the simulation ###################################
+        #### Sync the simulation ################################### 同步模擬
         if GUI:
             sync(i, START, ENV.TIMESTEP)
 
-    #### Close the ENVironment #################################
+    #### Close the ENVironment ################################# 關閉環境
     ENV.close()
 
-    #### Save the simulation results ###########################
+    #### Save the simulation results ########################### 保存模擬結果
     LOGGER.save()
 
-    #### Plot the simulation results ###########################
+    #### Plot the simulation results ########################### 繪製模擬結果
     LOGGER.plot()
 ```
 DSLPIDControl.py(經過調整GUI按鍵**Use GUI RPM**數值(左右滑動)來控制四軸無人機飛行)
@@ -500,7 +500,7 @@ from gym_pybullet_drones.utils.utils import sync, str2bool
 
 if __name__ == "__main__":
 
-    #### Define and parse (optional) arguments for the script ##
+    #### Define and parse (optional) arguments for the script ## 為腳本定義和解析（可選）參數
     parser = argparse.ArgumentParser(description='Helix flight script using CtrlAviary or VisionAviary and DSLPIDControl')
     parser.add_argument('--drone',              default="cf2x",     type=DroneModel,    help='Drone model (default: CF2X)', metavar='', choices=DroneModel)
     parser.add_argument('--num_drones',         default=3,          type=int,           help='Number of drones (default: 3)', metavar='')
@@ -517,14 +517,14 @@ if __name__ == "__main__":
     parser.add_argument('--duration_sec',       default=5,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
     ARGS = parser.parse_args()
 
-    #### Initialize the simulation #############################
+    #### Initialize the simulation ############################# 初始化模擬
     H = .1
     H_STEP = .05
     R = .3
     INIT_XYZS = np.array([[R*np.cos((i/6)*2*np.pi+np.pi/2), R*np.sin((i/6)*2*np.pi+np.pi/2)-R, H+i*H_STEP] for i in range(ARGS.num_drones)])
     AGGR_PHY_STEPS = int(ARGS.simulation_freq_hz/ARGS.control_freq_hz) if ARGS.aggregate else 1
 
-    #### Create the environment with or without video capture ##
+    #### Create the environment with or without video capture ## 使用或不使用視頻捕獲創建環境
     if ARGS.vision: 
         env = VisionAviary(drone_model=ARGS.drone,
                            num_drones=ARGS.num_drones,
@@ -551,10 +551,10 @@ if __name__ == "__main__":
                          user_debug_gui=ARGS.user_debug_gui
                          )
 
-    #### Obtain the PyBullet Client ID from the environment ####
+    #### Obtain the PyBullet Client ID from the environment #### 從環境中獲取 PyBullet Client ID
     PYB_CLIENT = env.getPyBulletClient()
 
-    #### Initialize a circular trajectory ######################
+    #### Initialize a circular trajectory ###################### 初始化圓形軌跡
     PERIOD = 10
     NUM_WP = ARGS.control_freq_hz*PERIOD
     TARGET_POS = np.zeros((NUM_WP,3))
@@ -562,16 +562,16 @@ if __name__ == "__main__":
         TARGET_POS[i, :] = R*np.cos((i/NUM_WP)*(2*np.pi)+np.pi/2)+INIT_XYZS[0, 0], R*np.sin((i/NUM_WP)*(2*np.pi)+np.pi/2)-R+INIT_XYZS[0, 1], INIT_XYZS[0, 2]
     wp_counters = np.array([int((i*NUM_WP/6)%NUM_WP) for i in range(ARGS.num_drones)])
 
-    #### Initialize the logger #################################
+    #### Initialize the logger ################################# 初始化記錄器
     logger = Logger(logging_freq_hz=int(ARGS.simulation_freq_hz/AGGR_PHY_STEPS),
                     num_drones=ARGS.num_drones
                     )
 
-    #### Initialize the controllers ############################
+    #### Initialize the controllers ############################ 初始化控制器
     ctrl = [DSLPIDControl(env) for i in range(ARGS.num_drones)]
     # ctrl = [SimplePIDControl(env) for i in range(ARGS.num_drones)]
 
-    #### Run the simulation ####################################
+    #### Run the simulation #################################### 運行模擬
     CTRL_EVERY_N_STEPS = int(np.floor(env.SIM_FREQ/ARGS.control_freq_hz))
     action = {str(i): np.array([0,0,0,0]) for i in range(ARGS.num_drones)}
     START = time.time()
@@ -580,24 +580,24 @@ if __name__ == "__main__":
         #### Make it rain rubber ducks #############################
         # if i/env.SIM_FREQ>5 and i%10==0 and i/env.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [0+random.gauss(0, 0.3),-0.5+random.gauss(0, 0.3),3], p.getQuaternionFromEuler([random.randint(0,360),random.randint(0,360),random.randint(0,360)]), physicsClientId=PYB_CLIENT)
 
-        #### Step the simulation ###################################
+        #### Step the simulation ################################### 步驟模擬
         obs, reward, done, info = env.step(action)
 
-        #### Compute control at the desired frequency ##############
+        #### Compute control at the desired frequency ############## 以所需頻率計算控制
         if i%CTRL_EVERY_N_STEPS == 0:
 
-            #### Compute control for the current way point #############
+            #### Compute control for the current way point ############# 計算當前路點的控制
             for j in range(ARGS.num_drones):
                 action[str(j)], _, _ = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS*env.TIMESTEP,
                                                                        state=obs[str(j)]["state"],
                                                                        target_pos=np.hstack([TARGET_POS[wp_counters[j], 0:2], H+j*H_STEP])
                                                                        )
 
-            #### Go to the next way point and loop #####################
+            #### Go to the next way point and loop ##################### 轉到下一個路點並循環
             for j in range(ARGS.num_drones): 
                 wp_counters[j] = wp_counters[j] + 1 if wp_counters[j] < (NUM_WP-1) else 0
 
-        #### Log the simulation ####################################
+        #### Log the simulation #################################### 記錄模擬
         for j in range(ARGS.num_drones):
             logger.log(drone=j,
                        timestamp=i/env.SIM_FREQ,
@@ -605,10 +605,10 @@ if __name__ == "__main__":
                        control=np.hstack([TARGET_POS[wp_counters[j], 0:2], H+j*H_STEP, np.zeros(9)])
                        )
 
-        #### Printout ##############################################
+        #### Printout ############################################## 輸出
         if i%env.SIM_FREQ == 0:
             env.render()
-            #### Print matrices with the images captured by each drone #
+            #### Print matrices with the images captured by each drone # 用每架無人機捕獲的圖像打印矩陣
             if ARGS.vision:
                 for j in range(ARGS.num_drones):
                     print(obs[str(j)]["rgb"].shape, np.average(obs[str(j)]["rgb"]),
@@ -616,17 +616,17 @@ if __name__ == "__main__":
                           obs[str(j)]["seg"].shape, np.average(obs[str(j)]["seg"])
                           )
 
-        #### Sync the simulation ###################################
+        #### Sync the simulation ################################### 同步模擬
         if ARGS.gui:
             sync(i, START, env.TIMESTEP)
 
-    #### Close the environment #################################
+    #### Close the environment ################################# 關閉環境
     env.close()
 
-    #### Save the simulation results ###########################
+    #### Save the simulation results ########################### 保存模擬結果
     logger.save()
 
-    #### Plot the simulation results ###########################
+    #### Plot the simulation results ########################### 繪製模擬結果
     if ARGS.plot:
         logger.plot()
 
