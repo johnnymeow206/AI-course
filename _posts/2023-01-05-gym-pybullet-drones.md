@@ -116,17 +116,17 @@ RECORD = False
 
 if __name__ == "__main__":
 
-    #### Create the ENVironment ################################ 創建環境
+    #### Create the ENVironment(創建環境) ################################
     ENV = CtrlAviary(gui=GUI, record=RECORD)
     PYB_CLIENT = ENV.getPyBulletClient()
 
-    #### Initialize the LOGGER ################################# 初始化記錄器
+    #### Initialize the LOGGER(初始化記錄器) ##############################
     LOGGER = Logger(logging_freq_hz=ENV.SIM_FREQ)
 
-    #### Initialize the controller ############################# 初始化控制器
+    #### Initialize the controller(初始化控制器) ##########################
     CTRL = HW1Control(ENV)
 
-    #### Initialize the ACTION ################################# 初始化動作
+    #### Initialize the ACTION(初始化動作) ################################
     ACTION = {}
     OBS = ENV.reset()
     STATE = OBS["0"]["state"]
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                                        target_acceleration=np.zeros(3)
                                        )
 
-    #### Initialize target trajectory ########################## 初始化目標軌跡
+    #### Initialize target trajectory(初始化目標軌跡) #####################
     TARGET_POSITION = np.array([[0, 0, 1.0] for i in range(DURATION*ENV.SIM_FREQ)])
     TARGET_VELOCITY = np.zeros([DURATION * ENV.SIM_FREQ, 3])
     TARGET_ACCELERATION = np.zeros([DURATION * ENV.SIM_FREQ, 3])
@@ -146,17 +146,17 @@ if __name__ == "__main__":
     TARGET_VELOCITY[1:, :] = (TARGET_POSITION[1:, :] - TARGET_POSITION[0:-1, :]) / ENV.SIM_FREQ
     TARGET_ACCELERATION[1:, :] = (TARGET_VELOCITY[1:, :] - TARGET_VELOCITY[0:-1, :]) / ENV.SIM_FREQ
 
-    #### Run the simulation #################################### 運行模擬
+    #### Run the simulation(運行模擬) #################################### 
     START = time.time()
     for i in range(0, DURATION*ENV.SIM_FREQ):
 
-        ### Secret control performance booster ##################### 秘密控制性能助推器
+        ### Secret control performance booster(秘密控制性能助推器) ########
         # if i/ENV.SIM_FREQ>3 and i%30==0 and i/ENV.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [random.gauss(0, 0.3), random.gauss(0, 0.3), 3], p.getQuaternionFromEuler([random.randint(0, 360),random.randint(0, 360),random.randint(0, 360)]), physicsClientId=PYB_CLIENT)
 
-        #### Step the simulation ################################### 步驟模擬
+        #### Step the simulation(步驟模擬) ###############################
         OBS, _, _, _ = ENV.step(ACTION)
 
-        #### Compute control ####################################### 計算控制
+        #### Compute control(計算控制) ###################################
         STATE = OBS["0"]["state"]
         ACTION["0"] = CTRL.compute_control(current_position=STATE[0:3],
                                            current_velocity=STATE[10:13],
@@ -165,24 +165,24 @@ if __name__ == "__main__":
                                            target_acceleration=TARGET_ACCELERATION[i, :]
                                            )
 
-        #### Log the simulation #################################### 記錄模擬
+        #### Log the simulation(記錄模擬) ################################
         LOGGER.log(drone=0, timestamp=i/ENV.SIM_FREQ, state=STATE)
 
-        #### Printout ############################################## 輸出
+        #### Printout(輸出) ##############################################
         if i%ENV.SIM_FREQ == 0:
             ENV.render()
 
-        #### Sync the simulation ################################### 同步模擬
+        #### Sync the simulation(同步模擬) ###############################
         if GUI:
             sync(i, START, ENV.TIMESTEP)
 
-    #### Close the ENVironment ################################# 關閉環境
+    #### Close the ENVironment(關閉環境) #################################
     ENV.close()
 
-    #### Save the simulation results ########################### 保存模擬結果
+    #### Save the simulation results(保存模擬結果) ########################
     LOGGER.save()
 
-    #### Plot the simulation results ########################### 繪製模擬結果
+    #### Plot the simulation results(繪製模擬結果) ########################
     LOGGER.plot()
 ```
 DSLPIDControl.py(經過調整GUI按鍵**Use GUI RPM**數值(左右滑動)來控制四軸無人機飛行)
@@ -423,7 +423,7 @@ class DSLPIDControl(BaseControl):
         self.integral_rpy_e = self.integral_rpy_e - rot_e*control_timestep
         self.integral_rpy_e = np.clip(self.integral_rpy_e, -1500., 1500.)
         self.integral_rpy_e[0:2] = np.clip(self.integral_rpy_e[0:2], -1., 1.)
-        #### PID target torques ####################################
+        #### PID target torques(PID 目標轉矩) ####################################
         target_torques = - np.multiply(self.P_COEFF_TOR, rot_e) \
                          + np.multiply(self.D_COEFF_TOR, ang_vel_e) \
                          + np.multiply(self.I_COEFF_TOR, self.integral_rpy_e)
@@ -517,7 +517,7 @@ if __name__ == "__main__":
     parser.add_argument('--duration_sec',       default=5,          type=int,           help='Duration of the simulation in seconds (default: 5)', metavar='')
     ARGS = parser.parse_args()
 
-    #### Initialize the simulation ############################# 初始化模擬
+    #### Initialize the simulation(模擬初始化) #############################
     H = .1
     H_STEP = .05
     R = .3
@@ -554,7 +554,7 @@ if __name__ == "__main__":
     #### Obtain the PyBullet Client ID from the environment #### 從環境中獲取 PyBullet Client ID
     PYB_CLIENT = env.getPyBulletClient()
 
-    #### Initialize a circular trajectory ###################### 初始化圓形軌跡
+    #### Initialize a circular trajectory(初始化圓形軌跡) ####################
     PERIOD = 10
     NUM_WP = ARGS.control_freq_hz*PERIOD
     TARGET_POS = np.zeros((NUM_WP,3))
@@ -562,16 +562,16 @@ if __name__ == "__main__":
         TARGET_POS[i, :] = R*np.cos((i/NUM_WP)*(2*np.pi)+np.pi/2)+INIT_XYZS[0, 0], R*np.sin((i/NUM_WP)*(2*np.pi)+np.pi/2)-R+INIT_XYZS[0, 1], INIT_XYZS[0, 2]
     wp_counters = np.array([int((i*NUM_WP/6)%NUM_WP) for i in range(ARGS.num_drones)])
 
-    #### Initialize the logger ################################# 初始化記錄器
+    #### Initialize the logger(初始化記錄器) #################################
     logger = Logger(logging_freq_hz=int(ARGS.simulation_freq_hz/AGGR_PHY_STEPS),
                     num_drones=ARGS.num_drones
                     )
 
-    #### Initialize the controllers ############################ 初始化控制器
+    #### Initialize the controllers(初始化控制器) ############################
     ctrl = [DSLPIDControl(env) for i in range(ARGS.num_drones)]
     # ctrl = [SimplePIDControl(env) for i in range(ARGS.num_drones)]
 
-    #### Run the simulation #################################### 運行模擬
+    #### Run the simulation(運行模擬) ########################################
     CTRL_EVERY_N_STEPS = int(np.floor(env.SIM_FREQ/ARGS.control_freq_hz))
     action = {str(i): np.array([0,0,0,0]) for i in range(ARGS.num_drones)}
     START = time.time()
@@ -580,24 +580,24 @@ if __name__ == "__main__":
         #### Make it rain rubber ducks #############################
         # if i/env.SIM_FREQ>5 and i%10==0 and i/env.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [0+random.gauss(0, 0.3),-0.5+random.gauss(0, 0.3),3], p.getQuaternionFromEuler([random.randint(0,360),random.randint(0,360),random.randint(0,360)]), physicsClientId=PYB_CLIENT)
 
-        #### Step the simulation ################################### 步驟模擬
+        #### Step the simulation(步驟模擬) ###################################
         obs, reward, done, info = env.step(action)
 
-        #### Compute control at the desired frequency ############## 以所需頻率計算控制
+        #### Compute control at the desired frequency(以所需頻率計算控制) #####
         if i%CTRL_EVERY_N_STEPS == 0:
 
-            #### Compute control for the current way point ############# 計算當前路點的控制
+            #### Compute control for the current way point(計算當前路點的控制) #############
             for j in range(ARGS.num_drones):
                 action[str(j)], _, _ = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS*env.TIMESTEP,
                                                                        state=obs[str(j)]["state"],
                                                                        target_pos=np.hstack([TARGET_POS[wp_counters[j], 0:2], H+j*H_STEP])
                                                                        )
 
-            #### Go to the next way point and loop ##################### 轉到下一個路點並循環
+            #### Go to the next way point and loop(轉到下一個路點並循環) #####################
             for j in range(ARGS.num_drones): 
                 wp_counters[j] = wp_counters[j] + 1 if wp_counters[j] < (NUM_WP-1) else 0
 
-        #### Log the simulation #################################### 記錄模擬
+        #### Log the simulation(記錄模擬) ####################################
         for j in range(ARGS.num_drones):
             logger.log(drone=j,
                        timestamp=i/env.SIM_FREQ,
@@ -605,7 +605,7 @@ if __name__ == "__main__":
                        control=np.hstack([TARGET_POS[wp_counters[j], 0:2], H+j*H_STEP, np.zeros(9)])
                        )
 
-        #### Printout ############################################## 輸出
+        #### Printout(輸出) #################################################
         if i%env.SIM_FREQ == 0:
             env.render()
             #### Print matrices with the images captured by each drone # 用每架無人機捕獲的圖像打印矩陣
@@ -616,17 +616,17 @@ if __name__ == "__main__":
                           obs[str(j)]["seg"].shape, np.average(obs[str(j)]["seg"])
                           )
 
-        #### Sync the simulation ################################### 同步模擬
+        #### Sync the simulation(同步模擬) ###################################
         if ARGS.gui:
             sync(i, START, env.TIMESTEP)
 
-    #### Close the environment ################################# 關閉環境
+    #### Close the environment(關閉環境) #####################################
     env.close()
 
-    #### Save the simulation results ########################### 保存模擬結果
+    #### Save the simulation results(保存模擬結果) ###########################
     logger.save()
 
-    #### Plot the simulation results ########################### 繪製模擬結果
+    #### Plot the simulation results(繪製模擬結果) ###########################
     if ARGS.plot:
         logger.plot()
 
@@ -674,11 +674,11 @@ if __name__ == "__main__":
     with open(os.path.dirname(os.path.abspath(__file__))+"/../files/"+ARGS.trace_file, 'rb') as in_file:
         TRACE_TIMESTAMPS, TRACE_DATA, TRACE_CTRL_REFERENCE, _, _, _ = pickle.load(in_file)
 
-    #### Compute trace's parameters ############################
+    #### Compute trace's parameters(計算追蹤的參數) ############################
     DURATION_SEC = int(TRACE_TIMESTAMPS[-1])
     SIMULATION_FREQ_HZ = int(len(TRACE_TIMESTAMPS)/TRACE_TIMESTAMPS[-1])
 
-    #### Initialize the simulation #############################
+    #### Initialize the simulation(初始化模擬) ################################
     env = CtrlAviary(drone_model=DroneModel.CF2X,
                      num_drones=1,
                      initial_xyzs=np.array([0, 0, .1]).reshape(1, 3),
@@ -695,20 +695,20 @@ if __name__ == "__main__":
     #### TRACE_FILE starts at [0,0,0], sim starts at [0,0,INITIAL_STATE[2]]
     TRACE_CTRL_REFERENCE[:, 2] = INITIAL_STATE["0"]["state"][2]
 
-    #### Initialize the logger #################################
+    #### Initialize the logger(初始化記錄器) ##################################
     logger = Logger(logging_freq_hz=SIMULATION_FREQ_HZ,
                     num_drones=2,
                     duration_sec=DURATION_SEC
                     )
 
-    #### Initialize the controller #############################
+    #### Initialize the controller(初始化控制器) ##############################
     ctrl = DSLPIDControl(env)
 
-    #### Run the comparison ####################################
+    #### Run the comparison(運行比較) ########################################
     START = time.time()
     for i in range(DURATION_SEC*env.SIM_FREQ):
 
-        #### Step the simulation ###################################
+        #### Step the simulation(步驟模擬) ###################################
         obs, reward, done, info = env.step(action)
 
         #### Compute next action using the set points from the trace
@@ -721,35 +721,35 @@ if __name__ == "__main__":
         #### Re-arrange the trace for consistency with the logger
         trace_obs = np.hstack([TRACE_DATA[i, 0:3], np.zeros(4), TRACE_DATA[i, 6:9], TRACE_DATA[i, 3:6], TRACE_DATA[i, 9:12], TRACE_DATA[i, 12:16]])
 
-        #### Log the trace #########################################
+        #### Log the trace(記錄追蹤) ##########################################
         logger.log(drone=0,
                    timestamp=TRACE_TIMESTAMPS[i],
                    state=trace_obs,
                    control=np.hstack([TRACE_CTRL_REFERENCE[i, :], np.zeros(6)])
                    )
 
-        #### Log the simulation ####################################
+        #### Log the simulation(記錄模擬) ####################################
         logger.log(drone=1,
                    timestamp=i/env.SIM_FREQ,
                    state=obs["0"]["state"],
                    control=np.hstack([TRACE_CTRL_REFERENCE[i, :], np.zeros(6)])
                    )
 
-        #### Printout ##############################################
+        #### Printout(輸出) #################################################
         if i%env.SIM_FREQ == 0: 
             env.render()
 
-        #### Sync the simulation ###################################
+        #### Sync the simulation(同步模擬) ###################################
         if ARGS.gui: 
             sync(i, START, env.TIMESTEP)
 
-    #### Close the environment #################################
+    #### Close the environment(關閉環境) #####################################
     env.close()
 
-    #### Save the simulation results ###########################
+    #### Save the simulation results(保存模擬結果) ###########################
     logger.save()
 
-    #### Plot the simulation results ###########################
+    #### Plot the simulation results(繪製模擬結果) ###########################
     logger.plot(pwm=True)
 
 ```
@@ -790,7 +790,7 @@ if __name__ == "__main__":
     parser.add_argument('--duration_sec',       default=10,         type=int,           help='Duration of the simulation in seconds (default: 10)', metavar='')
     ARGS = parser.parse_args()
 
-    #### Initialize the simulation #############################
+    #### Initialize the simulation(模擬初始化) #############################
     INIT_XYZS = np.array([[.5, 0, 1],[-.5, 0, .5]])
     env = CtrlAviary(drone_model=ARGS.drone,
                      num_drones=2,
@@ -803,7 +803,7 @@ if __name__ == "__main__":
                      obstacles=True
                      )
 
-    #### Initialize the trajectories ###########################
+    #### Initialize the trajectories(初始化軌跡) ###########################
     PERIOD = 10
     NUM_WP = ARGS.control_freq_hz*PERIOD
     TARGET_POS = np.zeros((NUM_WP, 2))
@@ -811,39 +811,39 @@ if __name__ == "__main__":
         TARGET_POS[i, :] = [0.5*np.cos(2*np.pi*(i/NUM_WP)), 0]
     wp_counters = np.array([0, int(NUM_WP/2)])
 
-    #### Initialize the logger #################################
+    #### Initialize the logger(初始化記錄器) ################################
     logger = Logger(logging_freq_hz=ARGS.simulation_freq_hz,
                     num_drones=2,
                     duration_sec=ARGS.duration_sec
                     )
 
-    #### Initialize the controllers ############################
+    #### Initialize the controllers(初始化控制器) ###########################
     ctrl = [DSLPIDControl(env) for i in range(2)]
 
-    #### Run the simulation ####################################
+    #### Run the simulation(運行模擬) ######################################
     CTRL_EVERY_N_STEPS = int(np.floor(env.SIM_FREQ/ARGS.control_freq_hz))
     action = {str(i): np.array([0, 0, 0, 0]) for i in range(2)}
     START = time.time()
     for i in range(ARGS.duration_sec*env.SIM_FREQ):
 
-        #### Step the simulation ###################################
+        #### Step the simulation(步驟模擬) #################################
         obs, reward, done, info = env.step(action)
 
-        #### Compute control at the desired frequency ##############
+        #### Compute control at the desired frequency(以所需頻率計算控制) ##############
         if i%CTRL_EVERY_N_STEPS == 0:
 
-            #### Compute control for the current way point #############
+            #### Compute control for the current way point(計算當前路點的控制) #########
             for j in range(2):
                 action[str(j)], _, _ = ctrl[j].computeControlFromState(control_timestep=CTRL_EVERY_N_STEPS*env.TIMESTEP,
                                                                        state=obs[str(j)]["state"],
                                                                        target_pos=np.hstack([TARGET_POS[wp_counters[j], :], INIT_XYZS[j, 2]])
                                                                        )
 
-            #### Go to the next way point and loop #####################
+            #### Go to the next way point and loop(轉到下一個路點並迴圈) ################
             for j in range(2):
                 wp_counters[j] = wp_counters[j] + 1 if wp_counters[j] < (NUM_WP-1) else 0
 
-        #### Log the simulation ####################################
+        #### Log the simulation(記錄模擬) ####################################
         for j in range(2):
             logger.log(drone=j,
                        timestamp=i/env.SIM_FREQ,
@@ -851,21 +851,21 @@ if __name__ == "__main__":
                        control=np.hstack([TARGET_POS[wp_counters[j], :], INIT_XYZS[j ,2], np.zeros(9)])
                        )
 
-        #### Printout ##############################################
+        #### Printout(輸出) ##################################################
         if i%env.SIM_FREQ == 0:
             env.render()
 
-        #### Sync the simulation ###################################
+        #### Sync the simulation(同步模擬) ###################################
         if ARGS.gui:
             sync(i, START, env.TIMESTEP)
 
-    #### Close the environment #################################
+    #### Close the environment(關閉環境) #####################################
     env.close()
 
-    #### Save the simulation results ###########################
+    #### Save the simulation results(保存模擬結果) ###########################
     logger.save()
 
-    #### Plot the simulation results ###########################
+    #### Plot the simulation results(繪製模擬結果) ###########################
     logger.plot()
 
 ```
