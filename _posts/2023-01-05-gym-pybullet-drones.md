@@ -599,8 +599,11 @@ if __name__ == "__main__":
 ---
 ### 系統測試及成果展示
 aer1216_fall2020_hw1_sim.py<br>
-<iframe width="702" height="395" src="https://www.youtube.com/embed/MqDBqMSzaEE" title="2023/01/04 aer1216_fall2020_hw1_sim_control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br><br>
+<iframe width="702" height="395" src="https://www.youtube.com/embed/eX0EYnc5RNg" title="2023/01/04 aer1216_fall2020_hw1_sim_control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br><br>
 ![](https://github.com/Chiuuuuu/AI/blob/gh-pages/images/Figure_aer1216_fall2020_hw1_sim.png?raw=true)<br><br>
+
+aer1216_fall2020_hw1_sim.py<br>(經過調整GUI按鍵**Use GUI RPM**數值(左右滑動)來控制四軸無人機飛行)
+<iframe width="702" height="395" src="https://www.youtube.com/embed/MqDBqMSzaEE" title="2023/01/04 aer1216_fall2020_hw1_sim" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br><br>
 
 fly.py<br>
 <iframe width="702" height="395" src="https://www.youtube.com/embed/Xg3rgkXIYWg" title="2023/01/06 fly.py" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br><br>
