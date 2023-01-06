@@ -15,10 +15,11 @@ tags: [jekyll, ai]
 ---
 
 **開發過程:**
-1. <br>
-2. <br>
-3. <br>
-4. <br>
+1. Cart-Pole System(車桿系統)<br>
+2. 1D and 2D Quadrotor Systems(一維和二維四旋翼系統)<br>
+3. Stabilization and Trajectory Tracking Tasks(穩定和軌跡跟踪任務)<br>
+4. Safe-Control-Gym Extended API(安全控制運動擴展API)<br>
+5. Computational Performance(計算性能)<br>
 
 **執行環境:**
 以下是使用版本供參考
@@ -45,6 +46,15 @@ PyCharm是一個跨平台開發環境，擁有Microsoft Windows、macOS和Linux�
 
 參考來源: [Python自習手札 ](https://ithelp.ithome.com.tw/articles/10196461)
 
+---
+
+## 程式說明
+
+程式的部分主要分成**辨識手掌**和**產生泡泡**還有**計分計時**三個部分，其中辨識手掌的部分主要參考自MediaPipe的官方文檔如下
+
+---
+
+### 官方文檔
 
 ## Student's Accomplishment
 ### [MediaPipe Hands poke bubbles](https://hahakevin45.github.io/AI/lecture/2022/12/08/Pose-Estimation.html)
