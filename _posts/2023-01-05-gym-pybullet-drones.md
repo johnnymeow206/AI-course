@@ -59,9 +59,9 @@ video: [Learning to Fly](https://www.youtube.com/watch?v=VdTsVu1HuYk&ab_channel=
 paper: [Safe Learning in Robotics](https://www.annualreviews.org/doi/abs/10.1146/annurev-control-042920-020211)<br>
 paper: [Safe-Control-Gym](https://ieeexplore.ieee.org/abstract/document/9849119)<br>
 
-PyBullet 是一個快速且易於使用的 Python 模塊，用於機器人仿真和機器學習，重點是模擬到真實的轉移。 使用 PyBullet，您可以從 URDF 加載關節體，SDF、MJCF 等文件格式。PyBullet 提供正向動力學模擬、逆向動力學計算、正向和逆向運動學、碰撞檢測和射線相交查詢。 Bullet Physics SDK 包括 PyBullet 機器人示例，例如模擬 Minitaur 四足動物、使用 TensorFlow 推理運行的人形機器人和 KUKA 手臂抓取物體。
+**PyBullet** 是一個快速且易於使用的 Python 模塊，用於機器人仿真和機器學習，重點是模擬到真實的轉移。 使用 PyBullet，您可以從 URDF 加載關節體，SDF、MJCF 等文件格式。PyBullet 提供正向動力學模擬、逆向動力學計算、正向和逆向運動學、碰撞檢測和射線相交查詢。 Bullet Physics SDK 包括 PyBullet 機器人示例，例如模擬 Minitaur 四足動物、使用 TensorFlow 推理運行的人形機器人和 KUKA 手臂抓取物體。
 
-gym-pybullet-drones 最近很多針對連續動作的 RL 研究都集中在策略梯度算法和 actor-critic 架構上。四旋翼飛行器是 (i) 一種易於理解的移動機器人平台，其 (ii) 控制可以構建為連續狀態和動作問題，但超出一維，(iii) 它增加了許多候選策略導致的複雜性不可恢復的狀態，違反了在蘊含的馬爾可夫鏈上存在靜止狀態分佈的假設。
+**gym-pybullet-drones** 最近很多針對連續動作的 RL 研究都集中在策略梯度算法和 actor-critic 架構上。四旋翼飛行器是 (i) 一種易於理解的移動機器人平台，其 (ii) 控制可以構建為連續狀態和動作問題，但超出一維，(iii) 它增加了許多候選策略導致的複雜性不可恢復的狀態，違反了在蘊含的馬爾可夫鏈上存在靜止狀態分佈的假設。
 
 |                                   | `gym-pybullet-drones` | [AirSim](https://github.com/microsoft/AirSim) | [Flightmare](https://github.com/uzh-rpg/flightmare) |
 |---------------------------------: | :-------------------: | :-------------------------------------------: | :-------------------------------------------------: |
@@ -90,10 +90,259 @@ gym-pybullet-drones 最近很多針對連續動作的 RL 研究都集中在策�
 
 ### 官方文檔
 
+aer1216_fall2020_hw1_sim.py
 
+```
+import time
+import random
+import numpy as np
+import pybullet as p
 
+#### Uncomment the following 2 lines if "module gym_pybullet_drones cannot be found"
+"""import sys"""
+"""sys.path.append('../')"""
 
+from gym_pybullet_drones.envs.CtrlAviary import CtrlAviary
+from gym_pybullet_drones.utils.Logger import Logger
+from gym_pybullet_drones.utils.utils import sync
+from aer1216_fall2020_hw1_ctrl import HW1Control
 
+DURATION = 10
+"""int: The duration of the simulation in seconds."""
+GUI = True
+"""bool: Whether to use PyBullet graphical interface."""
+RECORD = False
+"""bool: Whether to save a video under /files/videos. Requires ffmpeg"""
+
+if __name__ == "__main__":
+
+    #### Create the ENVironment ################################
+    ENV = CtrlAviary(gui=GUI, record=RECORD)
+    PYB_CLIENT = ENV.getPyBulletClient()
+
+    #### Initialize the LOGGER #################################
+    LOGGER = Logger(logging_freq_hz=ENV.SIM_FREQ)
+
+    #### Initialize the controller #############################
+    CTRL = HW1Control(ENV)
+
+    #### Initialize the ACTION #################################
+    ACTION = {}
+    OBS = ENV.reset()
+    STATE = OBS["0"]["state"]
+    ACTION["0"] = CTRL.compute_control(current_position=STATE[0:3],
+                                       current_velocity=STATE[10:13],
+                                       target_position=STATE[0:3],
+                                       target_velocity=np.zeros(3),
+                                       target_acceleration=np.zeros(3)
+                                       )
+
+    #### Initialize target trajectory ##########################
+    TARGET_POSITION = np.array([[0, 0, 1.0] for i in range(DURATION*ENV.SIM_FREQ)])
+    TARGET_VELOCITY = np.zeros([DURATION * ENV.SIM_FREQ, 3])
+    TARGET_ACCELERATION = np.zeros([DURATION * ENV.SIM_FREQ, 3])
+
+    #### Derive the target trajectory to obtain target velocities and accelerations
+    TARGET_VELOCITY[1:, :] = (TARGET_POSITION[1:, :] - TARGET_POSITION[0:-1, :]) / ENV.SIM_FREQ
+    TARGET_ACCELERATION[1:, :] = (TARGET_VELOCITY[1:, :] - TARGET_VELOCITY[0:-1, :]) / ENV.SIM_FREQ
+
+    #### Run the simulation ####################################
+    START = time.time()
+    for i in range(0, DURATION*ENV.SIM_FREQ):
+
+        ### Secret control performance booster #####################
+        # if i/ENV.SIM_FREQ>3 and i%30==0 and i/ENV.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [random.gauss(0, 0.3), random.gauss(0, 0.3), 3], p.getQuaternionFromEuler([random.randint(0, 360),random.randint(0, 360),random.randint(0, 360)]), physicsClientId=PYB_CLIENT)
+
+        #### Step the simulation ###################################
+        OBS, _, _, _ = ENV.step(ACTION)
+
+        #### Compute control #######################################
+        STATE = OBS["0"]["state"]
+        ACTION["0"] = CTRL.compute_control(current_position=STATE[0:3],
+                                           current_velocity=STATE[10:13],
+                                           target_position=TARGET_POSITION[i, :],
+                                           target_velocity=TARGET_VELOCITY[i, :],
+                                           target_acceleration=TARGET_ACCELERATION[i, :]
+                                           )
+
+        #### Log the simulation ####################################
+        LOGGER.log(drone=0, timestamp=i/ENV.SIM_FREQ, state=STATE)
+
+        #### Printout ##############################################
+        if i%ENV.SIM_FREQ == 0:
+            ENV.render()
+
+        #### Sync the simulation ###################################
+        if GUI:
+            sync(i, START, ENV.TIMESTEP)
+
+    #### Close the ENVironment #################################
+    ENV.close()
+
+    #### Save the simulation results ###########################
+    LOGGER.save()
+
+    #### Plot the simulation results ###########################
+    LOGGER.plot()
+```
+aer1216_fall2020_hw2_sim.py
+
+```
+import time
+import random
+import numpy as np
+import pybullet as p
+
+#### Uncomment the following 2 lines if "module gym_pybullet_drones cannot be found"
+# import sys
+# sys.path.append('../')
+
+from gym_pybullet_drones.envs.CtrlAviary import CtrlAviary
+from gym_pybullet_drones.utils.Logger import Logger
+from gym_pybullet_drones.utils.utils import sync
+from gym_pybullet_drones.envs.BaseAviary import DroneModel
+from aer1216_fall2020_hw2_ctrl import HW2Control
+
+DURATION = 30
+"""int: The duration of the simulation in seconds."""
+GUI = True
+"""bool: Whether to use PyBullet graphical interface."""
+RECORD = False
+"""bool: Whether to save a video under /files/videos. Requires ffmpeg"""
+
+if __name__ == "__main__":
+
+    #### Create the ENVironment ################################
+    ENV = CtrlAviary(num_drones=3,
+                     drone_model=DroneModel.CF2P,
+                     initial_xyzs=np.array([ [.0, .0, .15], [-.3, .0, .15], [.3, .0, .15] ]),
+                     gui=GUI,
+                     record=RECORD
+                     )
+    PYB_CLIENT = ENV.getPyBulletClient()
+
+    #### Initialize the LOGGER #################################
+    LOGGER = Logger(logging_freq_hz=ENV.SIM_FREQ,
+                    num_drones=3,
+                    )
+
+    #### Initialize the CONTROLLERS ############################
+    CTRL_0 = HW2Control(env=ENV,
+                        control_type=0
+                        )
+    CTRL_1 = HW2Control(env=ENV,
+                        control_type=1
+                        )
+    CTRL_2 = HW2Control(env=ENV,
+                        control_type=2
+                        )
+
+    #### Initialize the ACTION #################################
+    ACTION = {}
+    OBS = ENV.reset()
+    STATE = OBS["0"]["state"]
+    ACTION["0"] = CTRL_0.compute_control(current_position=STATE[0:3],
+                                         current_velocity=STATE[10:13],
+                                         current_rpy=STATE[7:10],
+                                         current_rpy_dot=STATE[13:16],
+                                         target_position=STATE[0:3],
+                                         target_velocity=np.zeros(3),
+                                         target_acceleration=np.zeros(3)
+                                         )
+    STATE = OBS["1"]["state"]
+    ACTION["1"] = CTRL_1.compute_control(current_position=STATE[0:3],
+                                         current_velocity=STATE[10:13],
+                                         current_rpy=STATE[7:10],
+                                         current_rpy_dot=STATE[13:16],
+                                         target_position=STATE[0:3],
+                                         target_velocity=np.zeros(3),
+                                         target_acceleration=np.zeros(3)
+                                         )
+    STATE = OBS["2"]["state"]
+    ACTION["2"] = CTRL_2.compute_control(current_position=STATE[0:3],
+                                         current_velocity=STATE[10:13],
+                                         current_rpy=STATE[7:10],
+                                         current_rpy_dot=STATE[13:16],
+                                         target_position=STATE[0:3],
+                                         target_velocity=np.zeros(3),
+                                         target_acceleration=np.zeros(3)
+                                         )
+
+    #### Initialize the target trajectory ######################
+    TARGET_POSITION = np.array([[0, 4.0*np.cos(0.006*i), 1.0] for i in range(DURATION*ENV.SIM_FREQ)])
+    TARGET_VELOCITY = np.zeros([DURATION * ENV.SIM_FREQ, 3])
+    TARGET_ACCELERATION = np.zeros([DURATION * ENV.SIM_FREQ, 3])
+
+    #### Derive the target trajectory to obtain target velocities and accelerations
+    TARGET_VELOCITY[1:, :] = (TARGET_POSITION[1:, :] - TARGET_POSITION[0:-1, :])/ENV.SIM_FREQ
+    TARGET_ACCELERATION[1:, :] = (TARGET_VELOCITY[1:, :] - TARGET_VELOCITY[0:-1, :]) / ENV.SIM_FREQ
+
+    #### Run the simulation ####################################
+    START = time.time()
+    for i in range(0, DURATION*ENV.SIM_FREQ):
+
+        ### Secret control performance booster #####################
+        # if i/ENV.SIM_FREQ>3 and i%30==0 and i/ENV.SIM_FREQ<10: p.loadURDF("duck_vhacd.urdf", [random.gauss(0, 0.3), random.gauss(0, 0.3), 3], p.getQuaternionFromEuler([random.randint(0, 360),random.randint(0, 360),random.randint(0, 360)]), physicsClientId=PYB_CLIENT)
+
+        #### Step the simulation ###################################
+        OBS, _, _, _ = ENV.step(ACTION)
+
+        #### Compute control for drone 0 ###########################
+        STATE = OBS["0"]["state"]
+        ACTION["0"] = CTRL_0.compute_control(current_position=STATE[0:3],
+                                             current_velocity=STATE[10:13],
+                                             current_rpy=STATE[7:10],
+                                             current_rpy_dot=STATE[13:16],
+                                             target_position=TARGET_POSITION[i, :],
+                                             target_velocity=TARGET_VELOCITY[i, :],
+                                             target_acceleration=TARGET_ACCELERATION[i, :]
+                                             )
+        #### Log drone 0 ###########################################
+        LOGGER.log(drone=0, timestamp=i/ENV.SIM_FREQ, state=STATE)
+
+        #### Compute control for drone 1 ###########################
+        STATE = OBS["1"]["state"]
+        ACTION["1"] = CTRL_1.compute_control(current_position=STATE[0:3],
+                                             current_velocity=STATE[10:13],
+                                             current_rpy=STATE[7:10],
+                                             current_rpy_dot=STATE[13:16],
+                                             target_position=TARGET_POSITION[i, :] + np.array([-.3, .0, .0]),
+                                             target_velocity=TARGET_VELOCITY[i, :],
+                                             target_acceleration=TARGET_ACCELERATION[i, :]
+                                             )
+        #### Log drone 1 ###########################################
+        LOGGER.log(drone=1, timestamp=i/ENV.SIM_FREQ, state=STATE)
+
+        #### Compute control for drone 2 ###########################
+        STATE = OBS["2"]["state"]
+        ACTION["2"] = CTRL_2.compute_control(current_position=STATE[0:3],
+                                             current_velocity=STATE[10:13],
+                                             current_rpy=STATE[7:10],
+                                             current_rpy_dot=STATE[13:16],
+                                             target_position=TARGET_POSITION[i, :] + np.array([.3, .0, .0]),
+                                             target_velocity=TARGET_VELOCITY[i, :],
+                                             target_acceleration=TARGET_ACCELERATION[i, :]
+                                             )
+        #### Log drone 2 ###########################################
+        LOGGER.log(drone=2, timestamp=i/ENV.SIM_FREQ, state=STATE)
+
+        #### Printout ##############################################
+        if i%ENV.SIM_FREQ == 0:
+            ENV.render()
+
+        #### Sync the simulation ###################################
+        if GUI:
+            sync(i, START, ENV.TIMESTEP)
+
+    #### Close the ENVironment #################################
+    ENV.close()
+
+    #### Save the simulation results ###########################
+    LOGGER.save()
+
+    #### Plot the simulation results ###########################
+    LOGGER.plot()
+```
 
 
 ## Student's Accomplishment
