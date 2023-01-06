@@ -59,6 +59,9 @@ video: [Learning to Fly](https://www.youtube.com/watch?v=VdTsVu1HuYk&ab_channel=
 paper: [Safe Learning in Robotics](https://www.annualreviews.org/doi/abs/10.1146/annurev-control-042920-020211)<br>
 paper: [Safe-Control-Gym](https://ieeexplore.ieee.org/abstract/document/9849119)<br>
 
+PyBullet 是一個快速且易於使用的 Python 模塊，用於機器人仿真和機器學習，重點是模擬到真實的轉移。 使用 PyBullet，您可以從 URDF 加載關節體，SDF、MJCF 等文件格式。PyBullet 提供正向動力學模擬、逆向動力學計算、正向和逆向運動學、碰撞檢測和射線相交查詢。 Bullet Physics SDK 包括 PyBullet 機器人示例，例如模擬 Minitaur 四足動物、使用 TensorFlow 推理運行的人形機器人和 KUKA 手臂抓取物體。
+
+gym-pybullet-drones
 
 ---
 
