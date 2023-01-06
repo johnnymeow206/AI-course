@@ -46,6 +46,7 @@ GitHub: [mediapipe ](https://google.github.io/mediapipe/)
 Kaggle: [rkuo2000/mediapipe-pose](https://www.kaggle.com/code/rkuo2000/mediapipe-pose)
 
 **MediaPipe** 是 Google Research 所開發的機器學習模型應用框架，支援 JavaScript、Python、C++ 等程式語言，也可以放在嵌入式平臺 (例如樹莓派等)、移動設備 ( iOS 或 Android ) 或後端伺服器
+PyCharm是一個跨平台開發環境，擁有Microsoft Windows、macOS和Linux版本。社群版在Apache授權條款下釋出 ，另外還有專業版在專用授權條款下釋出，其擁有許多額外功能，比如Web開發、Python We框架、Python剖析器、遠端開發、支援資料庫與SQL等更多進階功能。
 
 如果使用 Python 語言進行開發，MediaPipe 支援下列幾種辨識功能
 
