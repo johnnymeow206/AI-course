@@ -61,7 +61,34 @@ paper: [Safe-Control-Gym](https://ieeexplore.ieee.org/abstract/document/9849119)
 
 PyBullet 是一個快速且易於使用的 Python 模塊，用於機器人仿真和機器學習，重點是模擬到真實的轉移。 使用 PyBullet，您可以從 URDF 加載關節體，SDF、MJCF 等文件格式。PyBullet 提供正向動力學模擬、逆向動力學計算、正向和逆向運動學、碰撞檢測和射線相交查詢。 Bullet Physics SDK 包括 PyBullet 機器人示例，例如模擬 Minitaur 四足動物、使用 TensorFlow 推理運行的人形機器人和 KUKA 手臂抓取物體。
 
-gym-pybullet-drones
+gym-pybullet-drones 最近很多針對連續動作的 RL 研究都集中在策略梯度算法和 actor-critic 架構上。四旋翼飛行器是 (i) 一種易於理解的移動機器人平台，其 (ii) 控制可以構建為連續狀態和動作問題，但超出一維，(iii) 它增加了許多候選策略導致的複雜性不可恢復的狀態，違反了在蘊含的馬爾可夫鏈上存在靜止狀態分佈的假設。
+
+## Overview
+
+|                                   | `gym-pybullet-drones` | [AirSim](https://github.com/microsoft/AirSim) | [Flightmare](https://github.com/uzh-rpg/flightmare) |
+|---------------------------------: | :-------------------: | :-------------------------------------------: | :-------------------------------------------------: |
+|                         *Physics* | PyBullet              | FastPhysicsEngine/PhysX                       | *Ad hoc*/Gazebo                                     |
+|                       *Rendering* | PyBullet              | Unreal Engine 4                               | Unity                                               |
+|                        *Language* | Python                | C++/C#                                        | C++/Python                                          |  
+|           *RGB/Depth/Segm. views* | **Yes**               | **Yes**                                       | **Yes**                                             |
+|             *Multi-agent control* | **Yes**               | **Yes**                                       | **Yes**                                             |
+|                   *ROS interface* | ROS2/Python           | ROS/C++                                       | ROS/C++                                             |
+|            *Hardware-In-The-Loop* | No                    | **Yes**                                       | No                                                  |
+|         *Fully steppable physics* | **Yes**               | No                                            | **Yes**                                             |
+|             *Aerodynamic effects* | Drag, downwash, ground| Drag                                          | Drag                                                |
+|          *OpenAI [`Gym`](https://github.com/openai/gym/blob/master/gym/core.py) interface* | **Yes** | **[Yes](https://github.com/microsoft/AirSim/pull/3215)** | **Yes**                                             |
+| *RLlib [`MultiAgentEnv`](https://github.com/ray-project/ray/blob/master/rllib/env/multi_agent_env.py) interface* | **Yes** | No | No                           |
+
+## Performance
+
+|                                   | Lenovo P52 (i7-8850H/Quadro P2000) | 2020 MacBook Pro (i7-1068NG7) |
+| --------------------------------: | :--------------------------------: | :---------------------------: |
+| Rendering                         | OpenGL                             | CPU-based TinyRenderer        | 
+| Single drone, **no** vision       | 15.5x                              | 16.8x                         |
+| Single drone **with** vision      | 10.8x                              | 1.3x                          |
+| Multi-drone (10), **no** vision   | 2.1x                               | 2.3x                          |
+| Multi-drone (5) **with** vision   | 2.5x                               | 0.2x                          |
+| 80 drones in 4 env, **no** vision | 0.8x                               | 0.95x                         |
 
 ---
 
