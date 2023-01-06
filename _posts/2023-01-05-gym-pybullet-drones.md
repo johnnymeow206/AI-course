@@ -54,10 +54,10 @@ PyCharm是一個跨平台開發環境，擁有Microsoft Windows、macOS和Linux�
 
 ### gym-pybullet-drones介紹
 
-gym-pybullet-drones: [gym-pybullet-drones ](https://github.com/utiasDSL/gym-pybullet-drones)
-video:[Learning to Fly](https://www.youtube.com/watch?v=VdTsVu1HuYk&ab_channel=LearningSystemsandRoboticsLab)
-paper:[Safe Learning in Robotics](https://www.annualreviews.org/doi/abs/10.1146/annurev-control-042920-020211)
-paper:[Safe-Control-Gym](https://ieeexplore.ieee.org/abstract/document/9849119)
+gym-pybullet-drones: [gym-pybullet-drones ](https://github.com/utiasDSL/gym-pybullet-drones)<br>
+video:[Learning to Fly](https://www.youtube.com/watch?v=VdTsVu1HuYk&ab_channel=LearningSystemsandRoboticsLab)<br>
+paper:[Safe Learning in Robotics](https://www.annualreviews.org/doi/abs/10.1146/annurev-control-042920-020211)<br>
+paper:[Safe-Control-Gym](https://ieeexplore.ieee.org/abstract/document/9849119)<br>
 
 
 ---
