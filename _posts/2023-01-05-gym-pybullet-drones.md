@@ -81,11 +81,10 @@ gym-pybullet-drones 最近很多針對連續動作的 RL 研究都集中在策�
 
 ## 程式說明
 
-程式的部分主要分成**辨識手掌**和**產生泡泡**還有**計分計時**三個部分，其中辨識手掌的部分主要參考自MediaPipe的官方文檔如下
-Major dependencies are [`gym`](https://gym.openai.com/docs/),  [`pybullet`](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#), 
-[`stable-baselines3`](https://stable-baselines3.readthedocs.io/en/master/guide/quickstart.html), and [`rllib`](https://docs.ray.io/en/master/rllib.html)
-
-Video recording requires to have [`ffmpeg`](https://ffmpeg.org) installed, on *macOS*
+程式的部分主要分成**辨識手掌**和**產生泡泡**還有**計分計時**三個部分，其中辨識手掌的部分主要參考自MediaPipe的官方文檔如下。<br>
+程式的部分主要透過 [`gym`](https://gym.openai.com/docs/),  [`pybullet`](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#), 
+[`stable-baselines3`](https://stable-baselines3.readthedocs.io/en/master/guide/quickstart.html), and [`rllib`](https://docs.ray.io/en/master/rllib.html)去控制。<br>
+影片錄製需要用到 [`ffmpeg`](https://ffmpeg.org)
 
 ---
 
