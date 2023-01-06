@@ -21,12 +21,16 @@ tags: [jekyll, ai]
 4. Safe-Control-Gym Extended API(安全控制運動擴展API)<br>
 5. Computational Performance(計算性能)<br>
 
+---
+
 **執行環境:**
 以下是使用版本供參考
 * python 3.9.10
 * gym-pybullet-drones-v0.5.2 (儲存.zip檔並解壓縮)
 * PyCharm (選擇安裝程序中的所有選項並重新啟動)
 * Visual Studio (選擇“使用 C++ 進行桌面開發”)
+
+---
 
 ### PyCharm介紹
 
