@@ -63,8 +63,6 @@ PyBullet 是一個快速且易於使用的 Python 模塊，用於機器人仿真
 
 gym-pybullet-drones 最近很多針對連續動作的 RL 研究都集中在策略梯度算法和 actor-critic 架構上。四旋翼飛行器是 (i) 一種易於理解的移動機器人平台，其 (ii) 控制可以構建為連續狀態和動作問題，但超出一維，(iii) 它增加了許多候選策略導致的複雜性不可恢復的狀態，違反了在蘊含的馬爾可夫鏈上存在靜止狀態分佈的假設。
 
-## Overview
-
 |                                   | `gym-pybullet-drones` | [AirSim](https://github.com/microsoft/AirSim) | [Flightmare](https://github.com/uzh-rpg/flightmare) |
 |---------------------------------: | :-------------------: | :-------------------------------------------: | :-------------------------------------------------: |
 |                         *Physics* | PyBullet              | FastPhysicsEngine/PhysX                       | *Ad hoc*/Gazebo                                     |
