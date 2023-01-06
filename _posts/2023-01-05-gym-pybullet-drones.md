@@ -79,17 +79,6 @@ gym-pybullet-drones 最近很多針對連續動作的 RL 研究都集中在策�
 |          *OpenAI [`Gym`](https://github.com/openai/gym/blob/master/gym/core.py) interface* | **Yes** | **[Yes](https://github.com/microsoft/AirSim/pull/3215)** | **Yes**                                             |
 | *RLlib [`MultiAgentEnv`](https://github.com/ray-project/ray/blob/master/rllib/env/multi_agent_env.py) interface* | **Yes** | No | No                           |
 
-## Performance
-
-|                                   | Lenovo P52 (i7-8850H/Quadro P2000) | 2020 MacBook Pro (i7-1068NG7) |
-| --------------------------------: | :--------------------------------: | :---------------------------: |
-| Rendering                         | OpenGL                             | CPU-based TinyRenderer        | 
-| Single drone, **no** vision       | 15.5x                              | 16.8x                         |
-| Single drone **with** vision      | 10.8x                              | 1.3x                          |
-| Multi-drone (10), **no** vision   | 2.1x                               | 2.3x                          |
-| Multi-drone (5) **with** vision   | 2.5x                               | 0.2x                          |
-| 80 drones in 4 env, **no** vision | 0.8x                               | 0.95x                         |
-
 ---
 
 ## 程式說明
