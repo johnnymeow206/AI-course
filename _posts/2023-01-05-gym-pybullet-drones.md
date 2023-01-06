@@ -13,6 +13,23 @@ tags: [jekyll, ai]
 透過調整GUI按鍵數值(左右滑動)來控制四軸無人機飛行。
 
 ---
+
+**開發過程:**
+1.
+2.
+3.
+4.
+
+**執行環境:**
+以下是使用版本供參考
+* python 3.9.10
+* gym-pybullet-drones-v0.5.2 (儲存.zip檔並解壓縮)
+* PyCharm (選擇安裝程序中的所有選項並重新啟動)
+* Visual Studio (選擇“使用 C++ 進行桌面開發”)
+
+### PyCharm介紹
+
+
 ## Student's Accomplishment
 ### [MediaPipe Hands poke bubbles](https://hahakevin45.github.io/AI/lecture/2022/12/08/Pose-Estimation.html)
 <iframe width="854" height="480" src="https://www.youtube.com/embed/YJ_JCDBOgiE" title="MediaPipe Hands poke bubbles" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
