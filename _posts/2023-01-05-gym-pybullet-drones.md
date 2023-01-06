@@ -52,6 +52,16 @@ PyCharm是一個跨平台開發環境，擁有Microsoft Windows、macOS和Linux�
 
 ---
 
+### gym-pybullet-drones介紹
+
+gym-pybullet-drones: [gym-pybullet-drones ](https://github.com/utiasDSL/gym-pybullet-drones)
+video:[Learning to Fly](https://www.youtube.com/watch?v=VdTsVu1HuYk&ab_channel=LearningSystemsandRoboticsLab)
+paper:[Safe Learning in Robotics](https://www.annualreviews.org/doi/abs/10.1146/annurev-control-042920-020211)
+paper:[Safe-Control-Gym](https://ieeexplore.ieee.org/abstract/document/9849119)
+
+
+---
+
 ## 程式說明
 
 程式的部分主要分成**辨識手掌**和**產生泡泡**還有**計分計時**三個部分，其中辨識手掌的部分主要參考自MediaPipe的官方文檔如下
@@ -59,6 +69,12 @@ PyCharm是一個跨平台開發環境，擁有Microsoft Windows、macOS和Linux�
 ---
 
 ### 官方文檔
+
+
+
+
+
+
 
 ## Student's Accomplishment
 ### [MediaPipe Hands poke bubbles](https://hahakevin45.github.io/AI/lecture/2022/12/08/Pose-Estimation.html)
